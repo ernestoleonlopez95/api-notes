@@ -54,8 +54,15 @@ public class NoteService implements INoteService {
 
     @Override
     public void updateNote(NoteDTO noteDTO) {
+
         if(!noteRepository.existsById(noteDTO.getId()))
             throw new BusinessException(messageHelper.getMessage("note.notFound"));
+
+        if(noteDTO.getStatus() == null)
+            throw new BusinessException(messageHelper.getMessage("note.valData.status.notnull"));
+
+        Note note = noteRepository.findById(noteDTO.getId()).get();
+        noteDTO.setCreatedAt(note.getCreatedAt());
         noteDTO.setUpdatedAt(LocalDateTime.now());
         noteRepository.save(noteMapper.toEntity(noteDTO));
     }
